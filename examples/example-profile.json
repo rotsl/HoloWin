@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 2,
+  "id": "00000000-0000-0000-0000-000000000001",
+  "name": "Example — Oak Desk",
+  "createdAt": "2026-01-01T00:00:00Z",
+  "modifiedAt": "2026-01-01T00:00:00Z",
+  "deskDescription": "Solid red oak, 140cm x 70cm",
+  "surfaceMaterial": "Wood",
+  "deviceDescription": "Built-in microphone of a Windows 11 laptop",
+  "microphoneDeviceId": null,
+  "cameraDeviceId": null,
+  "strategy": "Passive",
+  "positiveExamples": [],
+  "negativeExamples": [],
+  "minimumConfidence": 0.36,
+  "actionMappings": {
+    "leftRear":   { "zone": 0, "enabled": true,  "confidenceThreshold": 0.36, "cooldownMilliseconds": 200, "requireConfirmation": false },
+    "leftFront":  { "zone": 1, "enabled": true,  "confidenceThreshold": 0.36, "cooldownMilliseconds": 200, "requireConfirmation": false },
+    "rightRear":  { "zone": 2, "enabled": true,  "confidenceThreshold": 0.36, "cooldownMilliseconds": 200, "requireConfirmation": false },
+    "rightFront": { "zone": 3, "enabled": true,  "confidenceThreshold": 0.36, "cooldownMilliseconds": 200, "requireConfirmation": false }
+  },
+  "enabledTriggers": ["leftRear", "leftFront", "rightRear", "rightFront"],
+  "metadata": {
+    "author": "Rohan R",
+    "license": "MIT",
+    "note": "Empty example profile. Run Calibration to populate the examples."
+  }
+}

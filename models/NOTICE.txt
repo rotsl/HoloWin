@@ -1,0 +1,6 @@
+OpenCV Zoo palm detection and hand pose models
+Source: https://github.com/opencv/opencv_zoo
+Revision: 47534e27c9851bb1128ccc0102f1145e27f23f98
+License: Apache-2.0 (see LICENSE-OpenCV-Zoo.txt)
+The camera adapter uses the model geometry described by mp_palmdet.py and mp_handpose.py.
+HoloWin's C# adapter implements its own image sampling and coordinate conversion.

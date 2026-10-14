@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
+    <UseWindowsForms>false</UseWindowsForms>
+    <UseWPF>false</UseWPF>
+    <RootNamespace>HoloWin.Plugins</RootNamespace>
+    <AssemblyName>HoloWin.Plugins</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HoloWin.Core\HoloWin.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HoloWin.Sensors\HoloWin.Sensors.csproj" />
+    <ProjectReference Include="..\HoloWin.Actions\HoloWin.Actions.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,72 @@
+# Build and publish output
+[Bb]in/
+[Oo]bj/
+/artifacts/
+/site/
+/.venv/
+__pycache__/
+*.pyc
+AppPackages/
+BundleArtifacts/
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+
+# Test and coverage output
+TestResults/
+coverage/
+coverage.*
+*.trx
+*.coverage
+*.coveragexml
+BenchmarkDotNet.Artifacts/
+
+# IDE and local development state
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.swp
+*.swo
+/.codex/
+/.agents/
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Local logs, recordings and temporary files
+*.log
+logs/
+DebugCaptures/
+*.wav
+*.tmp
+*.bak
+
+# Dependency artifacts (keep shared NuGet configuration trackable)
+packages/
+*.nupkg
+*.snupkg
+
+# Downloaded models
+models/**/*.onnx
+models/**/*.tflite
+models/**/*.bin
+models/*.download
+!models/.gitkeep
+
+# Local credentials and signing material
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+*.pem
+*.cer
+secrets.json
+appsettings.Local.json

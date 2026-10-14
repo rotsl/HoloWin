@@ -1,0 +1,113 @@
+name: release
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to create or update
+        required: true
+        default: v0.1.0
+
+permissions:
+  contents: write
+
+jobs:
+  standalone:
+    name: Build standalone Windows x64 EXE
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Mask runner paths
+        run: |
+          foreach ($value in @($env:GITHUB_WORKSPACE, $env:RUNNER_TEMP, $env:USERPROFILE, $env:LOCALAPPDATA, $env:COMPUTERNAME)) {
+              if ($value) { Write-Output "::add-mask::$value" }
+          }
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Fetch verified camera models
+        run: ./scripts/download-hand-model.ps1
+      - name: Validate Release before packaging
+        run: |
+          dotnet build HoloWin.sln -c Release --verbosity quiet
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test HoloWin.sln -c Release --no-build --no-restore --verbosity quiet
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      # Builds a fresh app ZIP, then embeds it in the self-contained launcher.
+      # Includes WinUI, .NET, OpenCV, ONNX Runtime and verified camera models.
+      - name: Publish all-in-one EXE
+        run: ./scripts/publish-single-exe.ps1
+
+      - name: Verify single-file extraction and checksum
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = Join-Path $PWD 'artifacts/standalone/HoloWin.exe'
+          $expectedHash = (Get-Content -LiteralPath "$exe.sha256").Split(' ')[0]
+          if ((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash -ne $expectedHash) {
+              throw 'Standalone EXE checksum mismatch.'
+          }
+
+          # Test a copy with no companion files beside it, like a Downloads folder.
+          $isolated = Join-Path $env:RUNNER_TEMP ('holowin-standalone-' + [guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory -Path $isolated | Out-Null
+          $isolatedExe = Join-Path $isolated 'HoloWin.exe'
+          Copy-Item -LiteralPath $exe -Destination $isolatedExe
+          $process = Start-Process -FilePath $isolatedExe -ArgumentList '--extract-only' -WorkingDirectory $isolated -WindowStyle Hidden -PassThru
+          if (-not $process.WaitForExit(120000)) {
+              $process.Kill($true)
+              throw 'Standalone extraction timed out.'
+          }
+          if ($process.ExitCode -ne 0) { throw "Standalone extraction failed: $($process.ExitCode)" }
+
+          $payloadHash = (Get-FileHash -LiteralPath 'artifacts/HoloWin-win-x64.zip' -Algorithm SHA256).Hash
+          $cache = Join-Path $env:LOCALAPPDATA "HoloWin/releases/$payloadHash"
+          if ((Get-Content -LiteralPath (Join-Path $cache '.complete')) -ne $payloadHash) {
+              throw 'Extraction completion marker does not match the payload.'
+          }
+          foreach ($file in @('HoloWin.exe', 'HoloWin.dll', 'Assets/HoloWin.ico', 'Assets/HoloWin.png', 'coreclr.dll', 'Microsoft.UI.Xaml.dll', 'HoloWin.Vision.dll', 'OpenCvSharpExtern.dll', 'Microsoft.ML.OnnxRuntime.dll', 'onnxruntime.dll')) {
+              $original = Join-Path 'artifacts/HoloWin-win-x64' $file
+              $extracted = Join-Path $cache $file
+              if ((Get-FileHash -LiteralPath $original).Hash -ne (Get-FileHash -LiteralPath $extracted).Hash) {
+                  throw "Extracted file mismatch: $file"
+              }
+          }
+          foreach ($file in @('palm_detection_mediapipe_2023feb.onnx', 'handpose_estimation_mediapipe_2023feb.onnx')) {
+              $original = Join-Path 'models' $file
+              $extracted = Join-Path $cache "models/$file"
+              if ((Get-FileHash -LiteralPath $original).Hash -ne (Get-FileHash -LiteralPath $extracted).Hash) {
+                  throw "Extracted model mismatch: $file"
+              }
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HoloWin-standalone-win-x64
+          if-no-files-found: error
+          compression-level: 0
+          path: |
+            artifacts/standalone/HoloWin.exe
+            artifacts/standalone/HoloWin.exe.sha256
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') { throw 'Use a release tag such as v0.1.0.' }
+          gh release view $env:RELEASE_TAG *> $null
+          if ($LASTEXITCODE -ne 0) {
+              gh release create $env:RELEASE_TAG --target $env:GITHUB_SHA --title "HoloWin $env:RELEASE_TAG" --notes-file CHANGELOG.md
+              if ($LASTEXITCODE -ne 0) { throw 'Could not create the release.' }
+          }
+          gh release upload $env:RELEASE_TAG artifacts/standalone/HoloWin.exe artifacts/standalone/HoloWin.exe.sha256 --clobber
+          if ($LASTEXITCODE -ne 0) { throw 'Could not upload release assets.' }

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
+    <UseWindowsForms>false</UseWindowsForms>
+    <UseWPF>false</UseWPF>
+    <RootNamespace>HoloWin.Vision</RootNamespace>
+    <AssemblyName>HoloWin.Vision</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HoloWin.Core\HoloWin.Core.csproj" />
+    <ProjectReference Include="..\HoloWin.Gestures\HoloWin.Gestures.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.*" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.*" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.*" />
+  </ItemGroup>
+</Project>

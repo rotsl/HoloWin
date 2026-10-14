@@ -1,0 +1,43 @@
+name: build-and-test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and test Windows x64 (${{ matrix.configuration }})
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+    runs-on: windows-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Mask runner paths
+        run: |
+          foreach ($value in @($env:GITHUB_WORKSPACE, $env:RUNNER_TEMP, $env:USERPROFILE, $env:LOCALAPPDATA, $env:COMPUTERNAME)) {
+              if ($value) { Write-Output "::add-mask::$value" }
+          }
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore HoloWin.sln --verbosity quiet
+      - name: Fetch verified camera models
+        run: ./scripts/download-hand-model.ps1
+      - name: Build
+        run: dotnet build HoloWin.sln -c ${{ matrix.configuration }} --no-restore --verbosity quiet
+      - name: Test
+        # Tests use synthetic input; CI never starts sensors or sends keyboard/media actions.
+        run: dotnet test HoloWin.sln -c ${{ matrix.configuration }} --no-build --no-restore --verbosity quiet

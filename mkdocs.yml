@@ -1,0 +1,13 @@
+site_name: HoloWin
+site_description: Local desk-tap and hand-gesture controls for Windows 11.
+site_url: https://rotsl.github.io/HoloWin/
+repo_url: https://github.com/rotsl/HoloWin
+docs_dir: website/pages
+site_dir: site
+theme:
+  name: null
+  custom_dir: website/theme
+nav:
+  - Home: index.md
+hooks:
+  - website/hooks.py

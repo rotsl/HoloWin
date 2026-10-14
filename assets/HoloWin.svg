@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="HoloWin logo">
+  <rect x="8" y="8" width="240" height="240" rx="48" fill="#101C32"/>
+  <rect x="60" y="60" width="36" height="136" rx="12" fill="#4ED9E8"/>
+  <rect x="160" y="60" width="36" height="136" rx="12" fill="#4ED9E8"/>
+  <rect x="84" y="110" width="88" height="36" rx="10" fill="#E8F8FF"/>
+  <circle cx="206" cy="50" r="14" fill="#B4F17C"/>
+</svg>

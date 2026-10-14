@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
+    <AssemblyName>HoloWin</AssemblyName>
+    <ApplicationIcon>..\..\assets\HoloWin.ico</ApplicationIcon>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishTrimmed>false</PublishTrimmed>
+    <DebugType>none</DebugType>
+    <PayloadPath>$(MSBuildThisFileDirectory)..\..\artifacts\HoloWin-win-x64.zip</PayloadPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(PayloadPath)" LogicalName="HoloWin.Payload.zip" />
+  </ItemGroup>
+  <Target Name="CheckPayload" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(PayloadPath)')" Text="Run scripts/publish.ps1 to create the application payload first." />
+  </Target>
+</Project>

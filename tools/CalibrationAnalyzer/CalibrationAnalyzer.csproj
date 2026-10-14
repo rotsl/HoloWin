@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
+    <RootNamespace>CalibrationAnalyzer</RootNamespace>
+    <AssemblyName>CalibrationAnalyzer</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\HoloWin.Core\HoloWin.Core.csproj" />
+    <ProjectReference Include="..\..\src\HoloWin.Sensors\HoloWin.Sensors.csproj" />
+    <ProjectReference Include="..\..\src\HoloWin.Diagnostics\HoloWin.Diagnostics.csproj" />
+    <ProjectReference Include="..\..\src\HoloWin.Calibration\HoloWin.Calibration.csproj" />
+    <ProjectReference Include="..\..\src\HoloWin.Persistence\HoloWin.Persistence.csproj" />
+  </ItemGroup>
+</Project>

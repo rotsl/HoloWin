@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="HoloWin.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HoloWin.App"
+    xmlns:views="using:HoloWin.App.Views">
+    <Grid>
+        <views:MainPage />
+    </Grid>
+</Window>

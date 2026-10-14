@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ config.site_description }}">
+  <title>{{ config.site_name }} · Windows desk controls</title>
+  <link rel="canonical" href="{{ page.canonical_url }}">
+  <link rel="icon" href="{{ 'assets/HoloWin.ico' | url }}">
+  <link rel="stylesheet" href="{{ 'style.css' | url }}">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header>
+    <a class="brand" href="{{ config.site_url }}"><img src="{{ 'assets/HoloWin.png' | url }}" width="44" height="44" alt="">HoloWin</a>
+    <nav aria-label="Main navigation"><a href="#quick-start">Quick start</a><a href="{{ config.repo_url }}">GitHub</a><a href="https://github.com/sponsors/rotsl">Sponsor</a></nav>
+  </header>
+  <main id="content">{{ page.content }}</main>
+  <footer>HoloWin · Windows 11 x64 · <a href="https://github.com/rotsl/HoloWin/blob/main/LICENSE">MIT license</a></footer>
+</body>
+</html>
