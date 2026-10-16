@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.1
+
+- Fixed silent startup failure in the GitHub-built EXE by rebuilding the WinUI resource index with self-contained settings.
+- Added a check for the WinUI theme resource and a packaged startup smoke test before release uploads.
+- The launcher now reports early application crashes instead of exiting silently.
+- Added the dashboard screenshot to README and the website.
+- Updated packaging and troubleshooting instructions.
+
 ## v0.1.0
 
 Initial experimental release for Windows 11 x64.

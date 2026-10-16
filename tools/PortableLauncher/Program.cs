@@ -11,6 +11,7 @@ internal static class Program
     private static int Main(string[] args)
     {
         bool extractOnly = args.Contains("--extract-only", StringComparer.Ordinal);
+        bool smokeTest = args.Contains("--smoke-test", StringComparer.Ordinal);
         string cacheRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HoloWin", "releases");
         try
         {
@@ -34,7 +35,7 @@ internal static class Program
                     {
                         payload.Position = 0;
                         ZipFile.ExtractToDirectory(payload, staging);
-                        foreach (string required in new[] { "HoloWin.exe", "HoloWin.dll", "coreclr.dll", "Microsoft.ui.xaml.dll", "OpenCvSharpExtern.dll", "onnxruntime.dll" })
+                        foreach (string required in new[] { "HoloWin.exe", "HoloWin.dll", "coreclr.dll", "Microsoft.ui.xaml.dll", "resources.pri", "Microsoft.UI.pri", "Microsoft.UI.Xaml.Controls.pri", "OpenCvSharpExtern.dll", "onnxruntime.dll" })
                             if (!File.Exists(Path.Combine(staging, required)))
                                 throw new InvalidDataException("The application payload is missing " + required);
                         File.WriteAllText(Path.Combine(staging, ".complete"), hash);
@@ -52,6 +53,13 @@ internal static class Program
             var start = new ProcessStartInfo(executable) { UseShellExecute = false, WorkingDirectory = destination };
             foreach (string arg in args) start.ArgumentList.Add(arg);
             using var process = Process.Start(start) ?? throw new InvalidOperationException("Windows could not start HoloWin.");
+            if (smokeTest)
+            {
+                if (!process.WaitForExit(30000)) { process.Kill(true); throw new TimeoutException("UI startup check timed out."); }
+                return process.ExitCode;
+            }
+            if (process.WaitForExit(3000) && process.ExitCode != 0)
+                throw new InvalidOperationException($"HoloWin exited during startup (0x{process.ExitCode:X8}). See %TEMP%\\HoloWin-startup.log for details.");
             return 0;
         }
         catch (Exception ex)
@@ -62,7 +70,7 @@ internal static class Program
                 File.WriteAllText(Path.Combine(cacheRoot, "launcher-error.log"), ex.ToString());
             }
             catch { /* A disk error must not hide the original failure. */ }
-            if (!extractOnly) MessageBox(IntPtr.Zero, "HoloWin could not start.\n\n" + ex.Message, "HoloWin", 0x10);
+            if (!extractOnly && !smokeTest) MessageBox(IntPtr.Zero, "HoloWin could not start.\n\n" + ex.Message, "HoloWin", 0x10);
             return 1;
         }
     }

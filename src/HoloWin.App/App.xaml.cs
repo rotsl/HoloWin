@@ -10,6 +10,7 @@ namespace HoloWin.App;
 public partial class App : Application
 {
     private static Window? _mainWindow;
+    private static readonly bool SmokeTest = Environment.GetCommandLineArgs().Contains("--smoke-test");
 
     private static readonly string LogPath = Path.Combine(
         Path.GetTempPath(),
@@ -44,6 +45,15 @@ public partial class App : Application
 
         try
         {
+            if (SmokeTest)
+            {
+                // Exercise WinUI resources without profiles, hotkeys or sensor services.
+                var control = new Microsoft.UI.Xaml.Controls.Button { Content = "HoloWin startup check" };
+                control.Loaded += (_, _) => Environment.Exit(0);
+                _mainWindow = new Window { Content = control };
+                _mainWindow.Activate();
+                return;
+            }
             Log("Creating MainWindow");
 
             _mainWindow = new MainWindow();
@@ -74,6 +84,7 @@ public partial class App : Application
         Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         Log($"UNHANDLED XAML EXCEPTION: {e.Exception}");
+        if (SmokeTest) Environment.Exit(1);
 
         Debug.WriteLine(
             $"[HoloWin] Unhandled: {e.Exception}");

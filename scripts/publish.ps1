@@ -6,6 +6,9 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 & (Join-Path $PSScriptRoot 'download-hand-model.ps1')
 $destination = Join-Path $repoRoot 'artifacts/HoloWin-win-x64'
 $project = Join-Path $repoRoot 'src/HoloWin.App/HoloWin.App.csproj'
+# Recreate the PRI with distribution settings after any framework-dependent build.
+dotnet clean $project -c $Configuration -r win-x64 -p:SelfContained=true -p:WindowsAppSDKSelfContained=true --verbosity quiet
+if ($LASTEXITCODE -ne 0) { throw 'Cleaning before self-contained publishing failed.' }
 dotnet publish $project -c $Configuration -r win-x64 --self-contained true -p:WindowsAppSDKSelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=false -o $destination
 if ($LASTEXITCODE -ne 0) { throw 'Publishing HoloWin failed.' }
 Copy-Item -LiteralPath (Join-Path $repoRoot 'LICENSE') -Destination (Join-Path $destination 'LICENSE.txt') -Force
@@ -35,12 +38,14 @@ from the new location.
 See README.md for usage and known limitations; see LICENSE.txt for the license.
 '@ | Set-Content (Join-Path $destination 'START-HERE.txt')
 $required = @('HoloWin.exe', 'coreclr.dll', 'Microsoft.UI.Xaml.dll',
+    'resources.pri', 'Microsoft.UI.pri', 'Microsoft.UI.Xaml.Controls.pri',
     'Assets/HoloWin.ico', 'Assets/HoloWin.png',
     'HoloWin.Vision.dll', 'OpenCvSharpExtern.dll', 'Microsoft.ML.OnnxRuntime.dll', 'onnxruntime.dll',
     'models/palm_detection_mediapipe_2023feb.onnx', 'models/handpose_estimation_mediapipe_2023feb.onnx', 'models/LICENSE-OpenCV-Zoo.txt')
 foreach ($file in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $destination $file))) { throw "Publish is missing $file" }
 }
+& (Join-Path $PSScriptRoot 'verify-publish-resources.ps1') -PublishDirectory $destination
 Compress-Archive -Path "$destination/*" -DestinationPath (Join-Path $repoRoot 'artifacts/HoloWin-win-x64.zip') -Force
 $zipPath = Join-Path $repoRoot 'artifacts/HoloWin-win-x64.zip'
 $hash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash

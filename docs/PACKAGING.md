@@ -32,11 +32,11 @@ dotnet publish src/HoloWin.App/HoloWin.App.csproj -c Release -r win-x64 --self-c
 
 Each recipient creates their own microphone and desk calibration. Application data stays in `%LOCALAPPDATA%\HoloWin`; it is not included in the distribution. To remove the application, disable Start at sign-in in Settings, close HoloWin, and delete its extracted folder. Reset data in Settings before removal if desired.
 
-The development build remains framework-dependent. No certificate is created or installed by the publish script.
+Publishing first cleans the app with self-contained settings, then rebuilds its resource index. A MakePRI check rejects packages that lack the WinUI theme resource. This prevents a prior framework-dependent build from leaving an incomplete resources.pri in the package. The development build remains framework-dependent. No certificate is created or installed by the publish script.
 
 ## Release workflow
 
-`.github/workflows/release.yml` runs on `v*` tags or manual dispatch. It builds and tests Release, then calls `scripts/publish-single-exe.ps1`, tests extraction from an isolated EXE, compares required extracted files with the payload, and uploads `HoloWin.exe` plus `HoloWin.exe.sha256` as the `HoloWin-standalone-win-x64` workflow artifact. Download and extract the artifact to obtain the EXE. After verification, the workflow publishes the EXE and checksum as assets on the tagged GitHub Release. The website links to the latest release EXE. Binaries are not signed.
+`.github/workflows/release.yml` runs on `v*` tags or manual dispatch. It builds and tests Release, then calls `scripts/publish-single-exe.ps1`, tests extraction and themed WinUI startup from an isolated EXE, compares required extracted files with the payload, and uploads `HoloWin.exe` plus `HoloWin.exe.sha256` as the `HoloWin-standalone-win-x64` workflow artifact. Download and extract the artifact to obtain the EXE. After verification, the workflow publishes the EXE and checksum as assets on the tagged GitHub Release. The website links to the latest release EXE. Binaries are not signed.
 
 ## Camera support and future updates
 

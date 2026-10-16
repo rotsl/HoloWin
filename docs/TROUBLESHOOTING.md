@@ -76,3 +76,9 @@ Use an existing destination folder or a full PNG filename. Surrounding double qu
 Scan sources in Hardware and inspect their state. Save a rule for a saved action, start monitoring and arm presence actions. The first reading is a baseline; the source must change state after arming. A Bluetooth device can be paired without being connected. HID presence indicates an attached interface, not user activity. Unknown readings do not fire a rule.
 
 Brightness actions require Windows WMI monitor brightness support. An external monitor may need its own controls. Volume steps target the default playback device. For F-key and tab actions, focus the intended application before triggering; use a custom tab shortcut if its bindings differ.
+
+## Downloaded EXE closes before a window appears
+
+Check %TEMP%\HoloWin-startup.log. An error mentioning Microsoft.UI.Xaml/Themes/themeresources.xaml means the package has an incomplete WinUI resource index. Calibration and saved settings do not cause this error.
+
+Use a rebuilt package from the corrected publishing script. It regenerates resources.pri with self-contained settings and checks for the theme before creating the ZIP. The standalone launcher uses a new cache folder for the corrected payload, so existing profiles can stay in place. For a startup-only check, run the EXE with --smoke-test; exit code 0 means a themed control loaded successfully.

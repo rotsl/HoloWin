@@ -8,7 +8,7 @@ on:
       tag:
         description: Release tag to create or update
         required: true
-        default: v0.1.0
+        default: v0.1.1
 
 permissions:
   contents: write
@@ -86,6 +86,15 @@ jobs:
                   throw "Extracted model mismatch: $file"
               }
           }
+
+          foreach ($file in @('resources.pri', 'Microsoft.UI.pri', 'Microsoft.UI.Xaml.Controls.pri')) {
+              if ((Get-FileHash (Join-Path 'artifacts/HoloWin-win-x64' $file)).Hash -ne (Get-FileHash (Join-Path $cache $file)).Hash) {
+                  throw "Extracted resource mismatch: $file"
+              }
+          }
+          $startup = Start-Process -FilePath $isolatedExe -ArgumentList '--smoke-test' -WindowStyle Hidden -PassThru
+          if (-not $startup.WaitForExit(60000)) { $startup.Kill($true); throw 'UI startup check timed out.' }
+          if ($startup.ExitCode -ne 0) { throw "UI startup check failed: $($startup.ExitCode)" }
 
       - uses: actions/upload-artifact@v4
         with:

@@ -31,7 +31,7 @@ Coverage is selective. Tests do not verify every timeout, UI control, external a
 Start-Process -FilePath .\artifacts\standalone\HoloWin.exe -ArgumentList '--extract-only' -Wait
 ```
 
-The release workflow runs the EXE from a folder without companion files, verifies extraction and compares required files with the published payload. It uploads the EXE and checksum. This does not exercise the GUI or physical hardware.
+The release workflow runs the EXE from a folder without companion files, verifies extraction and compares required files with the published payload. It uploads the EXE and checksum. It also runs --smoke-test, which loads a themed WinUI control and exits without profiles, hotkeys or sensors. This catches missing theme resources but does not test the full interface or physical hardware.
 
 ## Synthetic throughput tool
 
