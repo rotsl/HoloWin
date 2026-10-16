@@ -18,6 +18,8 @@ Windows 11 build 22621 or later, x64. The single EXE includes its companion file
 
 Choose your actions and save them in a profile. Cameras and sensors start only when you enable them. Gesture, light and presence actions also need to be armed for each session.
 
+<img class="app-screenshot" src="assets/dashboard.png" alt="HoloWin dashboard with profile, calibration and sensor controls" width="1322" height="873" loading="lazy">
+
 ## Quick start
 
 1. Download and run **HoloWin.exe**. Allow time for the first extraction.

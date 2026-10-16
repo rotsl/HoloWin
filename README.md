@@ -35,6 +35,8 @@ Profiles keep calibration and assignments together. The app also has global zone
 - [Documentation](#documentation)
 - [Attribution](#attribution)
 
+![HoloWin dashboard with profile, calibration and sensor controls](assets/screenshots/dashboard.png)
+
 ## Quick start
 
 If you have the all-in-one EXE, run it directly; it extracts its dependencies automatically. If you have the portable ZIP, extract all files and run its `HoloWin.exe`. No Microsoft Store or MSIX installation is required. For a source checkout, follow the build instructions below.
